@@ -88,6 +88,7 @@
                                         <th>Show Full Details</th>
                                         <th>Edit</th>
                                         <th>Delete</th>
+                                        <th>Add Expense</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -107,6 +108,11 @@
                                                 </button>
                                             </form>
                                         </td>
+                                        <td>
+                                            <a th:href="${home + 'employee/ticket/add-expense/' + ticket.ticketId}" class="btn btn-primary">
+                                                <i class="mdi mdi-plus"></i> Add Expense
+                                            </a>
+                                        </td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -115,6 +121,29 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Expense Form (Hidden by Default) -->
+            <div id="expenseForm" style="display: none;">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Add Expense</h4>
+                        <form id="expenseFormData" th:action="@{/employee/ticket/add-expense}" method="post">
+                            <input type="hidden" id="ticketId" name="ticketId" />
+                            <div class="form-group">
+                                <label for="amount">Amount</label>
+                                <input type="number" class="form-control" id="amount" name="amount" step="0.01" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="expenseDate">Expense Date</label>
+                                <input type="date" class="form-control" id="expenseDate" name="expenseDate" required />
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="button" class="btn btn-secondary" onclick="hideExpenseForm()">Cancel</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
             <!-- ============================================================== -->
             <!-- End Page Content -->
             <!-- ============================================================== -->
@@ -150,22 +179,31 @@
 <!-- ============================================================== -->
 <script th:inline="javascript">
     var home = /*[[${home}]]*/ null;
+
+    function showExpenseForm(ticketId) {
+        document.getElementById('ticketId').value = ticketId;
+        document.getElementById('expenseForm').style.display = 'block';
+    }
+
+    function hideExpenseForm() {
+        document.getElementById('expenseForm').style.display = 'none';
+    }
 </script>
-<script th:src="@{/js/library/jquery-3.2.1.min.js}" type="text/javascript">></script>
+<script th:src="@{/js/library/jquery-3.2.1.min.js}" type="text/javascript"></script>
 <!--    &lt;!&ndash; Bootstrap tether Core JavaScript &ndash;&gt;-->
-<script th:src="@{/js/library/popper.min.js}" type="text/javascript">></script>
-<script th:src="@{/js/library/bootstrap.min.js}" type="text/javascript">></script>
+<script th:src="@{/js/library/popper.min.js}" type="text/javascript"></script>
+<script th:src="@{/js/library/bootstrap.min.js}" type="text/javascript"></script>
 <!--    &lt;!&ndash; slimscrollbar scrollbar JavaScript &ndash;&gt;-->
-<script th:src="@{/js/library/perfect-scrollbar.jquery.min.js}" type="text/javascript">></script>
+<script th:src="@{/js/library/perfect-scrollbar.jquery.min.js}" type="text/javascript"></script>
 <!--Wave Effects -->
-<script th:src="@{/js/library/waves.js}" type="text/javascript">></script>
+<script th:src="@{/js/library/waves.js}" type="text/javascript"></script>
 <!--Menu sidebar -->
-<script th:src="@{/js/library/sidebarmenu.js}" type="text/javascript">></script>
+<script th:src="@{/js/library/sidebarmenu.js}" type="text/javascript"></script>
 <!--stickey kit -->
 <script th:src="@{/js/library/sticky-kit.min.js}"></script>
-<script th:src="@{/js/library/jquery.sparkline.min.js}" type="text/javascript">></script>
+<script th:src="@{/js/library/jquery.sparkline.min.js}" type="text/javascript"></script>
 <!--Custom JavaScript -->
-<script th:src="@{/js/library/custom.min.js}" type="text/javascript">></script>
+<script th:src="@{/js/library/custom.min.js}" type="text/javascript"></script>
 <!-- Editable -->
 <script th:src="@{/js/library/jquery.dataTables.min.js}"></script>
 <script th:src="@{/js/library/dataTables.responsive.min.js}"></script>
