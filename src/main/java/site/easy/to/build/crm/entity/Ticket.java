@@ -1,11 +1,17 @@
 package site.easy.to.build.crm.entity;
 
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import org.hibernate.mapping.ToOne;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "trigger_ticket")
@@ -30,7 +36,6 @@ public class Ticket {
     @Column(name = "priority")
     @NotBlank(message = "Priority is required")
     @Pattern(regexp = "^(low|medium|high|closed|urgent|critical)$", message = "Invalid priority")
-
     private String priority;
 
     @ManyToOne
@@ -45,13 +50,20 @@ public class Ticket {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
+    @ManyToOne
+    @JoinColumn(name = "expense_id")
+    private Expense expense;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    // Default constructor
     public Ticket() {
     }
 
-    public Ticket(String subject, String description, String status, String priority, User manager, User employee, Customer customer, LocalDateTime createdAt) {
+    // Parameterized constructor
+    public Ticket(String subject, String description, String status, String priority, User manager, User employee,
+            Customer customer, Expense expense, LocalDateTime createdAt) {
         this.subject = subject;
         this.description = description;
         this.status = status;
@@ -59,9 +71,11 @@ public class Ticket {
         this.manager = manager;
         this.employee = employee;
         this.customer = customer;
+        this.expense = expense;
         this.createdAt = createdAt;
     }
 
+    // Getters and Setters
     public int getTicketId() {
         return ticketId;
     }
@@ -124,6 +138,14 @@ public class Ticket {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
+    }
+
+    public Expense getExpense() {
+        return expense;
+    }
+
+    public void setExpense(Expense expense) {
+        this.expense = expense;
     }
 
     public LocalDateTime getCreatedAt() {

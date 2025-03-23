@@ -1,9 +1,9 @@
 package site.easy.to.build.crm.service.ticket;
 
+import java.util.List;
+
 import site.easy.to.build.crm.entity.Customer;
 import site.easy.to.build.crm.entity.Ticket;
-
-import java.util.List;
 
 public interface TicketService {
     public Ticket findByTicketId(int id);
@@ -33,4 +33,10 @@ public interface TicketService {
     long countByCustomerCustomerId(int customerId);
 
     void deleteAllByCustomer(Customer customer);
+
+    Ticket createRandomTicket();
+
+    void generateRandomTicket(int number);
+
+    public List<Ticket> findByCustomer(Customer customer);
 }
