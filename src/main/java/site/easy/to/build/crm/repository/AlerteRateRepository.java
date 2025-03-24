@@ -9,4 +9,5 @@ import site.easy.to.build.crm.entity.AlerteRate;
 public interface AlerteRateRepository extends JpaRepository<AlerteRate, Integer> {
 
     AlerteRate findFirstByOrderByAlerteRateDateDesc();
+    public AlerteRate findByAlerteRateId(Integer alerteId);
 }
