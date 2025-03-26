@@ -30,7 +30,9 @@ public class Lead {
 
     @Column(name = "status")
     @NotBlank(message = "Status is required")
-    @Pattern(regexp = "^(meeting-to-schedule|scheduled|archived|success|assign-to-sales)$", message = "Invalid status")
+    // @Pattern(regexp =
+    // "^(meeting-to-schedule|scheduled|archived|success|assign-to-sales)$", message
+    // = "Invalid status")
     private String status;
 
     @Column(name = "phone")
@@ -76,9 +78,11 @@ public class Lead {
     public Lead() {
     }
 
-    public Lead(String name, String status, String phone, String meetingId, Boolean googleDrive, String googleDriveFolderId,
-                List<LeadAction> leadActions, List<File> files, List<GoogleDriveFile> googleDriveFiles, User manager, User employee,
-                Customer customer, Expense expense, LocalDateTime createdAt) {
+    public Lead(String name, String status, String phone, String meetingId, Boolean googleDrive,
+            String googleDriveFolderId,
+            List<LeadAction> leadActions, List<File> files, List<GoogleDriveFile> googleDriveFiles, User manager,
+            User employee,
+            Customer customer, Expense expense, LocalDateTime createdAt) {
         this.name = name;
         this.status = status;
         this.phone = phone;
@@ -102,7 +106,7 @@ public class Lead {
     public void setExpense(Expense expense) {
         this.expense = expense;
     }
-    
+
     public int getLeadId() {
         return leadId;
     }
@@ -183,7 +187,6 @@ public class Lead {
         this.files.remove(file);
     }
 
-
     public void addGoogleDriveFile(GoogleDriveFile googleDriveFile) {
         this.googleDriveFiles.add(googleDriveFile);
     }
@@ -240,5 +243,3 @@ public class Lead {
         this.createdAt = createdAt;
     }
 }
-
-
