@@ -30,7 +30,9 @@ public class Ticket {
 
     @Column(name = "status")
     @NotBlank(message = "Status is required")
-    @Pattern(regexp = "^(open|assigned|on-hold|in-progress|resolved|closed|reopened|pending-customer-response|escalated|archived)$", message = "Invalid status")
+    // @Pattern(regexp =
+    // "^(open|assigned|on-hold|in-progress|resolved|closed|reopened|pending-customer-response|escalated|archived)$",
+    // message = "Invalid status")
     private String status;
 
     @Column(name = "priority")
@@ -62,7 +64,8 @@ public class Ticket {
     }
 
     // Parameterized constructor
-    public Ticket(String subject, String description, String status, String priority, User manager, User employee, Customer customer, Expense expense, LocalDateTime createdAt) {
+    public Ticket(String subject, String description, String status, String priority, User manager, User employee,
+            Customer customer, Expense expense, LocalDateTime createdAt) {
         this.subject = subject;
         this.description = description;
         this.status = status;
