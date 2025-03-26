@@ -34,10 +34,10 @@ public class CustomerBudgetController {
     private final CustomerService customerService;
 
     @Autowired
-    public CustomerBudgetController(CustomerBudgetService customerBudgetService,
-            AuthenticationUtils authenticationUtils,
-            UserService userService,
-            CustomerService customerService) {
+    public CustomerBudgetController(CustomerBudgetService customerBudgetService, 
+                                  AuthenticationUtils authenticationUtils,
+                                  UserService userService,
+                                  CustomerService customerService) {
         this.customerBudgetService = customerBudgetService;
         this.authenticationUtils = authenticationUtils;
         this.userService = userService;
@@ -48,7 +48,7 @@ public class CustomerBudgetController {
     public String showDetails(@PathVariable("id") int id, Model model, Authentication authentication) {
         int userId = authenticationUtils.getLoggedInUserId(authentication);
         User loggedInUser = userService.findById(userId);
-
+        
         if (loggedInUser.isInactiveUser()) {
             return "error/account-inactive";
         }
@@ -58,9 +58,9 @@ public class CustomerBudgetController {
             return "error/not-found";
         }
 
-        if (!AuthorizationUtil.hasRole(authentication, "ROLE_MANAGER") &&
-                budget.getUser() != null &&
-                budget.getUser().getId() != userId) {
+        if (!AuthorizationUtil.hasRole(authentication, "ROLE_MANAGER") && 
+            budget.getUser() != null && 
+            budget.getUser().getId() != userId) {
             return "error/access-denied";
         }
 
@@ -90,7 +90,7 @@ public class CustomerBudgetController {
     public String showCreateForm(Model model, Authentication authentication) {
         int userId = authenticationUtils.getLoggedInUserId(authentication);
         User loggedInUser = userService.findById(userId);
-
+        
         if (loggedInUser.isInactiveUser()) {
             return "error/account-inactive";
         }
@@ -107,10 +107,10 @@ public class CustomerBudgetController {
             @RequestParam("customerId") int customerId,
             Authentication authentication,
             Model model) {
-
+        
         int userId = authenticationUtils.getLoggedInUserId(authentication);
         User loggedInUser = userService.findById(userId);
-
+        
         if (loggedInUser.isInactiveUser()) {
             return "error/account-inactive";
         }
@@ -125,20 +125,20 @@ public class CustomerBudgetController {
         budget.setUser(loggedInUser);
         budget.setCreatedAt(LocalDateTime.now());
         budget.setUpdatedAt(LocalDateTime.now());
-
+        
         // Manual validation for required fields
         if (budget.getLabel() == null || budget.getLabel().trim().isEmpty()) {
             bindingResult.rejectValue("label", "NotBlank", "Label is required");
         }
-
+        
         if (budget.getAmount() == null) {
             bindingResult.rejectValue("amount", "NotNull", "Amount is required");
         }
-
+        
         if (budget.getTransactionDate() == null) {
             bindingResult.rejectValue("transactionDate", "NotNull", "Transaction date is required");
         }
-
+        
         if (bindingResult.hasErrors()) {
             populateModelAttributes(model, authentication, loggedInUser);
             return "budget/create-budget";
@@ -152,7 +152,7 @@ public class CustomerBudgetController {
     public String showUpdateForm(@PathVariable("id") int id, Model model, Authentication authentication) {
         int userId = authenticationUtils.getLoggedInUserId(authentication);
         User loggedInUser = userService.findById(userId);
-
+        
         if (loggedInUser.isInactiveUser()) {
             return "error/account-inactive";
         }
@@ -162,9 +162,9 @@ public class CustomerBudgetController {
             return "error/not-found";
         }
 
-        if (!AuthorizationUtil.hasRole(authentication, "ROLE_MANAGER") &&
-                budget.getUser() != null &&
-                budget.getUser().getId() != userId) {
+        if (!AuthorizationUtil.hasRole(authentication, "ROLE_MANAGER") && 
+            budget.getUser() != null && 
+            budget.getUser().getId() != userId) {
             return "error/access-denied";
         }
 
@@ -180,10 +180,10 @@ public class CustomerBudgetController {
             @RequestParam("customerId") int customerId,
             Authentication authentication,
             Model model) {
-
+        
         int userId = authenticationUtils.getLoggedInUserId(authentication);
         User loggedInUser = userService.findById(userId);
-
+        
         if (loggedInUser.isInactiveUser()) {
             return "error/account-inactive";
         }
@@ -193,9 +193,9 @@ public class CustomerBudgetController {
             return "error/not-found";
         }
 
-        if (!AuthorizationUtil.hasRole(authentication, "ROLE_MANAGER") &&
-                existingBudget.getUser() != null &&
-                existingBudget.getUser().getId() != userId) {
+        if (!AuthorizationUtil.hasRole(authentication, "ROLE_MANAGER") && 
+            existingBudget.getUser() != null && 
+            existingBudget.getUser().getId() != userId) {
             return "error/access-denied";
         }
 
@@ -209,20 +209,20 @@ public class CustomerBudgetController {
         budget.setUser(existingBudget.getUser());
         budget.setCreatedAt(existingBudget.getCreatedAt());
         budget.setUpdatedAt(LocalDateTime.now());
-
+        
         // Manual validation for required fields
         if (budget.getLabel() == null || budget.getLabel().trim().isEmpty()) {
             bindingResult.rejectValue("label", "NotBlank", "Label is required");
         }
-
+        
         if (budget.getAmount() == null) {
             bindingResult.rejectValue("amount", "NotNull", "Amount is required");
         }
-
+        
         if (budget.getTransactionDate() == null) {
             bindingResult.rejectValue("transactionDate", "NotNull", "Transaction date is required");
         }
-
+        
         if (bindingResult.hasErrors()) {
             populateModelAttributes(model, authentication, loggedInUser);
             return "budget/create-budget";
@@ -231,12 +231,11 @@ public class CustomerBudgetController {
         customerBudgetService.save(budget);
         return "redirect:/employee/budget/user-budgets";
     }
-
     @PostMapping("/delete/{id}")
     public String deleteBudget(@PathVariable("id") int id, Authentication authentication) {
         int userId = authenticationUtils.getLoggedInUserId(authentication);
         User loggedInUser = userService.findById(userId);
-
+        
         if (loggedInUser.isInactiveUser()) {
             return "error/account-inactive";
         }
@@ -246,9 +245,9 @@ public class CustomerBudgetController {
             return "error/not-found";
         }
 
-        if (!AuthorizationUtil.hasRole(authentication, "ROLE_MANAGER") &&
-                budget.getUser() != null &&
-                budget.getUser().getId() != userId) {
+        if (!AuthorizationUtil.hasRole(authentication, "ROLE_MANAGER") && 
+            budget.getUser() != null && 
+            budget.getUser().getId() != userId) {
             return "error/access-denied";
         }
 

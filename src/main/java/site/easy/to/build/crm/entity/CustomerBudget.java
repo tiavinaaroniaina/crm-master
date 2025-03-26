@@ -54,8 +54,7 @@ public class CustomerBudget {
     public CustomerBudget() {
     }
 
-    public CustomerBudget(Customer customer, String label, BigDecimal amount, LocalDate transactionDate,
-            LocalDateTime createdAt, LocalDateTime updatedAt, User user) {
+    public CustomerBudget(Customer customer, String label, BigDecimal amount, LocalDate transactionDate, LocalDateTime createdAt, LocalDateTime updatedAt, User user) {
         this.customer = customer;
         this.label = label;
         this.amount = amount;

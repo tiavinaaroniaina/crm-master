@@ -62,8 +62,7 @@ public class Ticket {
     }
 
     // Parameterized constructor
-    public Ticket(String subject, String description, String status, String priority, User manager, User employee,
-            Customer customer, Expense expense, LocalDateTime createdAt) {
+    public Ticket(String subject, String description, String status, String priority, User manager, User employee, Customer customer, Expense expense, LocalDateTime createdAt) {
         this.subject = subject;
         this.description = description;
         this.status = status;

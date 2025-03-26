@@ -1,9 +1,9 @@
 package site.easy.to.build.crm.service.customer;
 
-import org.checkerframework.checker.units.qual.C;
-import site.easy.to.build.crm.entity.Customer;
-
+import java.math.BigDecimal;
 import java.util.List;
+
+import site.easy.to.build.crm.entity.Customer;
 
 public interface CustomerService {
 
@@ -23,4 +23,9 @@ public interface CustomerService {
 
     long countByUserId(int userId);
 
+    public BigDecimal getTotalBudget(Customer customer);
+
+    public BigDecimal calculateTotalExpenses(Customer customer);
+
+    public BigDecimal getTotalAllocatedBudget(Customer customer);
 }

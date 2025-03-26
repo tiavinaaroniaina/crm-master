@@ -1,5 +1,6 @@
 package site.easy.to.build.crm.service.budget;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import site.easy.to.build.crm.entity.CustomerBudget;
@@ -21,4 +22,6 @@ public interface CustomerBudgetService {
     long countByCustomerId(int customerId);
     
     long countByUserId(int userId);
+
+    public BigDecimal getTotalBudget();
 }

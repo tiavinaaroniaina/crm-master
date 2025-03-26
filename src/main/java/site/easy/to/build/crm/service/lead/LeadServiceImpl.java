@@ -1,5 +1,6 @@
 package site.easy.to.build.crm.service.lead;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
@@ -40,10 +41,9 @@ public class LeadServiceImpl implements LeadService {
     }
 
     @Override
-    public Lead findByMeetingId(String meetingId) {
+    public Lead findByMeetingId(String meetingId){
         return leadRepository.findByMeetingId(meetingId);
     }
-
     @Override
     public Lead save(Lead lead) {
         return leadRepository.save(lead);
@@ -62,7 +62,7 @@ public class LeadServiceImpl implements LeadService {
 
     @Override
     public List<Lead> getRecentCustomerLeads(int customerId, int limit) {
-        Pageable pageable = PageRequest.of(0, limit);
+        Pageable pageable = PageRequest.of(0,limit);
         return leadRepository.findByCustomerCustomerIdOrderByCreatedAtDesc(customerId, pageable);
     }
 
@@ -101,4 +101,14 @@ public class LeadServiceImpl implements LeadService {
     public List<Lead> findByCustomer(Customer customer) {
         return this.leadRepository.findByCustomerCustomerId(customer.getCustomerId());
     }
+
+    @Override
+    public BigDecimal getLeadExpenseAmount(Lead lead) {
+        if (lead.getExpense() != null) {
+            double amount = lead.getExpense().getAmount(); 
+            return new BigDecimal(amount);
+        }
+        
+        return BigDecimal.ZERO;
+    }   
 }

@@ -13,7 +13,6 @@ public interface LeadRepository extends JpaRepository<Lead, Integer> {
     public Lead findByLeadId(int id);
 
     public List<Lead> findByCustomerCustomerId(int customerId);
-
     public List<Lead> findByManagerId(int userId);
 
     public List<Lead> findByEmployeeId(int userId);
@@ -29,7 +28,6 @@ public interface LeadRepository extends JpaRepository<Lead, Integer> {
     long countByEmployeeId(int employeeId);
 
     long countByManagerId(int managerId);
-
     long countByCustomerCustomerId(int customerId);
 
     void deleteAllByCustomer(Customer customer);
