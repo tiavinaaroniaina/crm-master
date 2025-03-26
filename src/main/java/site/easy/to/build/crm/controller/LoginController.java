@@ -1,7 +1,7 @@
 package site.easy.to.build.crm.controller;
 
-import jakarta.annotation.Nullable;
-import jakarta.servlet.http.HttpSession;
+import java.util.List;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,10 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import jakarta.annotation.Nullable;
+import jakarta.servlet.http.HttpSession;
 import site.easy.to.build.crm.entity.User;
 import site.easy.to.build.crm.service.user.UserService;
-
-import java.util.List;
 
 @Controller
 public class LoginController {
@@ -58,5 +59,4 @@ public class LoginController {
         redirectAttributes.addFlashAttribute("passwordSuccess", "You have successfully changed your password");
         return "redirect:/login";
     }
-
 }

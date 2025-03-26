@@ -39,12 +39,12 @@ public class SecurityConfig {
     private final UserService userService;
 
     @Autowired
-    public SecurityConfig(OAuthLoginSuccessHandler oAuth2LoginSuccessHandler,
-            CustomOAuth2UserService oauthUserService,
-            CrmUserDetails crmUserDetails,
-            CustomerUserDetails customerUserDetails,
-            Environment environment,
-            UserService userService) {
+    public SecurityConfig(OAuthLoginSuccessHandler oAuth2LoginSuccessHandler, 
+                         CustomOAuth2UserService oauthUserService,
+                         CrmUserDetails crmUserDetails, 
+                         CustomerUserDetails customerUserDetails, 
+                         Environment environment,
+                         UserService userService) {
         this.oAuth2LoginSuccessHandler = oAuth2LoginSuccessHandler;
         this.oauthUserService = oauthUserService;
         this.crmUserDetails = crmUserDetails;
@@ -80,23 +80,27 @@ public class SecurityConfig {
                 .requestMatchers(AntPathRequestMatcher.antMatcher("/**/manager/**")).hasRole("MANAGER")
                 .requestMatchers("/employee/**").hasAnyRole("MANAGER", "EMPLOYEE")
                 .requestMatchers("/customer/**").hasRole("CUSTOMER")
-                .anyRequest().authenticated())
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/", true)
-                        .failureUrl("/login")
-                        .permitAll())
-                .userDetailsService(crmUserDetails)
-                .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/login")
-                        .userInfoEndpoint(userInfo -> userInfo.userService(oauthUserService))
-                        .successHandler(oAuth2LoginSuccessHandler))
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login")
-                        .permitAll())
-                .exceptionHandling(exception -> exception.accessDeniedHandler(accessDeniedHandler()));
+                .anyRequest().authenticated()
+        )
+        .formLogin(form -> form
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
+                .defaultSuccessUrl("/", true)
+                .failureUrl("/login")
+                .permitAll()
+        )
+        .userDetailsService(crmUserDetails)
+        .oauth2Login(oauth2 -> oauth2
+                .loginPage("/login")
+                .userInfoEndpoint(userInfo -> userInfo.userService(oauthUserService))
+                .successHandler(oAuth2LoginSuccessHandler)
+        )
+        .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login")
+                .permitAll()
+        )
+        .exceptionHandling(exception -> exception.accessDeniedHandler(accessDeniedHandler()));
 
         return http.build();
     }
@@ -115,26 +119,29 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.csrfTokenRepository(httpSessionCsrfTokenRepository));
 
         http.securityMatcher("/customer-login/**")
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/set-password/**").permitAll()
-                        .requestMatchers("/font-awesome/**").permitAll()
-                        .requestMatchers("/fonts/**").permitAll()
-                        .requestMatchers("/images/**").permitAll()
-                        .requestMatchers("/js/**").permitAll()
-                        .requestMatchers("/css/**").permitAll()
-                        .requestMatchers(AntPathRequestMatcher.antMatcher("/**/manager/**")).hasRole("MANAGER")
-                        .anyRequest().authenticated())
-                .formLogin(form -> form
-                        .loginPage("/customer-login")
-                        .loginProcessingUrl("/customer-login")
-                        .failureUrl("/customer-login")
-                        .defaultSuccessUrl("/", true)
-                        .permitAll())
-                .userDetailsService(customerUserDetails)
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/customer-login")
-                        .permitAll());
+            .authorizeHttpRequests(authorize -> authorize
+                .requestMatchers("/set-password/**").permitAll()
+                .requestMatchers("/font-awesome/**").permitAll()
+                .requestMatchers("/fonts/**").permitAll()
+                .requestMatchers("/images/**").permitAll()
+                .requestMatchers("/js/**").permitAll()
+                .requestMatchers("/css/**").permitAll()
+                .requestMatchers(AntPathRequestMatcher.antMatcher("/**/manager/**")).hasRole("MANAGER")
+                .anyRequest().authenticated()
+            )
+            .formLogin(form -> form
+                .loginPage("/customer-login")
+                .loginProcessingUrl("/customer-login")
+                .failureUrl("/customer-login")
+                .defaultSuccessUrl("/", true)
+                .permitAll()
+            )
+            .userDetailsService(customerUserDetails)
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/customer-login")
+                .permitAll()
+            );
 
         return http.build();
     }
@@ -143,16 +150,17 @@ public class SecurityConfig {
     @Order(0)
     public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
         http.securityMatcher("/api/**")
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Add CORS configuration
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll() // Allow preflight requests
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/dashboard/**").authenticated() // Require auth for dashboard
-                        .requestMatchers("/api/alerte-rates/**").permitAll() // Add this if you want public access
-                        .anyRequest().authenticated())
-                .addFilterBefore(new JwtAuthenticationFilter(userService), UsernamePasswordAuthenticationFilter.class);
+            .csrf(csrf -> csrf.disable())
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .cors(cors -> cors.configurationSource(corsConfigurationSource())) 
+            .authorizeHttpRequests(authorize -> authorize
+                .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll() 
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/dashboard/**").authenticated() 
+                .requestMatchers("/api/alerte-rates/**").permitAll() 
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(new JwtAuthenticationFilter(userService), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

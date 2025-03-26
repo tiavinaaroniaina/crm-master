@@ -18,18 +18,18 @@ public class DataGeneratorController {
 
     @Autowired
     private TicketService ticketService;
-
+    
     @GetMapping("/data")
     public String generate(RedirectAttributes redirectAttributes) {
         try {
             dataGeneratorService.generateDataForTable("customer", 20);
             redirectAttributes.addFlashAttribute("successMessage", "Data generated successfully");
 
-            return "redirect:/";
+            return "redirect:/";   
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "An error occured, please fix it.");
             e.printStackTrace();
-            return "redirect:/";
+            return "redirect:/";   
         }
     }
 
@@ -38,11 +38,11 @@ public class DataGeneratorController {
         try {
             ticketService.generateRandomTicket(25);
             redirectAttributes.addFlashAttribute("successMessage", "Tickets generated successfully");
-            return "redirect:/";
+            return "redirect:/";   
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "An error occured, please fix it.");
             e.printStackTrace();
-            return "redirect:/";
+            return "redirect:/";   
         }
     }
 }

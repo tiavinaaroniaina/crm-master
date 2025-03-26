@@ -1,0 +1,10 @@
+username,first_name,last_name,email,password,provider
+jdoe,John,Doe,john.doe@email.com,$2a$10$XURP2.,google
+jane.smith,Jane,Smith,jane.smith@email.com,$2a$10$YURP3.,local
+bob.jones,Bob,Jones,bob.jones@email.com,$2a$10$ZURP4.,facebook
+jdoe2,Alice,Wilson,alice.w@email.com,$2a$10$AURP5.,local      
+mike.b,Mike,Brown,,mike.b@email.com,$2a$10$BURP6.,google     
+sara.m,Sara,Miller,sara.m@email.com,$2a$10$CURP7.,local
+tom.c,,Clark,tom.c@email.com,$2a$10$DURP8.,facebook        
+lisa.d,Lisa,Davis,lisa.d@email.com,,local                   
+peter.w,Peter,White,peter.w@email.com,$2a$10$FURP0.,local

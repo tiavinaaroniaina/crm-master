@@ -1,0 +1,4 @@
+customer_email,type,status,subject_or_name,expense
+customer1@example.com,lead,pending,New lead,150.00
+customer2@example.com,lead,open,Lead follow-up,95.87
+customer3@example.com,lead,assigned,Partnership opportunity,68.50

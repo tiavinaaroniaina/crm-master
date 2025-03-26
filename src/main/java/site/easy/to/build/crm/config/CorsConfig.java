@@ -13,23 +13,23 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-
+        
         config.addAllowedOrigin("http://localhost:8000");
-
+        
         // Allow common HTTP methods
         config.addAllowedMethod("GET");
         config.addAllowedMethod("POST");
         config.addAllowedMethod("PUT");
         config.addAllowedMethod("DELETE");
         config.addAllowedMethod("OPTIONS");
-
+        
         // Allow common headers
         config.addAllowedHeader("Authorization");
         config.addAllowedHeader("Content-Type");
-
+        
         // Allow cookies and authentication
         config.setAllowCredentials(true);
-
+        
         source.registerCorsConfiguration("/api/**", config);
         return new CorsFilter(source);
     }

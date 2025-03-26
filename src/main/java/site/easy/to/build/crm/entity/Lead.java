@@ -1,11 +1,20 @@
 package site.easy.to.build.crm.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-
 import java.time.LocalDateTime;
 import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "trigger_lead")
@@ -57,6 +66,10 @@ public class Lead {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
+    @ManyToOne
+    @JoinColumn(name = "expense_id")
+    private Expense expense;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -65,7 +78,7 @@ public class Lead {
 
     public Lead(String name, String status, String phone, String meetingId, Boolean googleDrive, String googleDriveFolderId,
                 List<LeadAction> leadActions, List<File> files, List<GoogleDriveFile> googleDriveFiles, User manager, User employee,
-                Customer customer, LocalDateTime createdAt) {
+                Customer customer, Expense expense, LocalDateTime createdAt) {
         this.name = name;
         this.status = status;
         this.phone = phone;
@@ -78,9 +91,18 @@ public class Lead {
         this.manager = manager;
         this.employee = employee;
         this.customer = customer;
+        this.expense = expense;
         this.createdAt = createdAt;
     }
 
+    public Expense getExpense() {
+        return expense;
+    }
+
+    public void setExpense(Expense expense) {
+        this.expense = expense;
+    }
+    
     public int getLeadId() {
         return leadId;
     }

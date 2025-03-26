@@ -36,7 +36,6 @@ public class AuthApiController {
     @PostMapping("/login_api")
     public ResponseEntity<?> authenticateUser(@RequestBody Map<String, String> loginRequest) {
         try {
-            // Get user directly instead of using AuthenticationManager
             List<User> users = userService.findByUsername(loginRequest.get("username"));
             if (users.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
@@ -51,6 +50,7 @@ public class AuthApiController {
             
             // Create response with user details
             Map<String, Object> response = new HashMap<>();
+            
             response.put("userId", user.getId());
             response.put("username", user.getUsername());
             response.put("email", user.getEmail());

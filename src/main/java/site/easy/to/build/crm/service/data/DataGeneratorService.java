@@ -32,26 +32,26 @@ import jakarta.persistence.OneToMany;
 @SuppressWarnings("rawtypes")
 @Service
 public class DataGeneratorService {
-
+    
     @Autowired
     private ApplicationContext context;
-
+    
     // Cache for already generated entities by type and ID
     private Map<Class<?>, List<Object>> generatedEntitiesCache = new HashMap<>();
-
+    
     @Transactional
     public void generateDataForTable(String tableName, int recordCount) {
         // Clear cache for fresh generation
         generatedEntitiesCache.clear();
-
+        
         // Find the repository for this table
         String entityName = getEntityNameFromTableName(tableName);
         Object repository = findRepositoryForEntity(entityName);
-
+        
         if (repository == null) {
             throw new IllegalArgumentException("No repository found for table: " + tableName);
         }
-
+        
         // Generate data with dependencies considered
         Class<?> entityClass;
         try {
@@ -59,32 +59,32 @@ public class DataGeneratorService {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Entity class not found for: " + entityName, e);
         }
-
+        
         generateDataForEntity(entityClass, recordCount);
     }
-
+    
     @Transactional
     public void generateDataForAllTables(int recordCount) {
         // Clear cache for fresh generation
         generatedEntitiesCache.clear();
-
+        
         // Find all repositories
         Map<String, JpaRepository> repositories = context.getBeansOfType(JpaRepository.class);
-
+        
         // Sort entities by dependency order
         List<Class<?>> sortedEntities = sortEntitiesByDependency(repositories);
-
+        
         // Generate data in dependency order
         for (Class<?> entityClass : sortedEntities) {
             generateDataForEntity(entityClass, recordCount);
         }
     }
-
+    
     private List<Class<?>> sortEntitiesByDependency(Map<String, JpaRepository> repositories) {
         // Create a dependency graph
         Map<Class<?>, Set<Class<?>>> dependencyGraph = new HashMap<>();
         List<Class<?>> entities = new ArrayList<>();
-
+        
         // Build the graph
         for (JpaRepository repository : repositories.values()) {
             Class<?> entityClass = getEntityClassForRepository(repository);
@@ -93,26 +93,26 @@ public class DataGeneratorService {
                 dependencyGraph.put(entityClass, getDependencies(entityClass));
             }
         }
-
+        
         // Perform topological sort
         List<Class<?>> sorted = new ArrayList<>();
         Set<Class<?>> visited = new HashSet<>();
         Set<Class<?>> temp = new HashSet<>();
-
+        
         for (Class<?> entity : entities) {
             if (!visited.contains(entity)) {
                 topologicalSort(entity, visited, temp, dependencyGraph, sorted);
             }
         }
-
+        
         return sorted;
     }
-
-    private void topologicalSort(Class<?> entity, Set<Class<?>> visited, Set<Class<?>> temp,
-            Map<Class<?>, Set<Class<?>>> graph, List<Class<?>> sorted) {
+    
+    private void topologicalSort(Class<?> entity, Set<Class<?>> visited, Set<Class<?>> temp, 
+                                Map<Class<?>, Set<Class<?>>> graph, List<Class<?>> sorted) {
         temp.add(entity);
         Set<Class<?>> dependencies = graph.get(entity);
-
+        
         if (dependencies != null) {
             for (Class<?> dependency : dependencies) {
                 if (!visited.contains(dependency)) {
@@ -125,93 +125,93 @@ public class DataGeneratorService {
                 }
             }
         }
-
+        
         temp.remove(entity);
         visited.add(entity);
         sorted.add(0, entity); // Add to beginning of the list
     }
-
+    
     private Set<Class<?>> getDependencies(Class<?> entityClass) {
         Set<Class<?>> dependencies = new HashSet<>();
-
+        
         for (Field field : entityClass.getDeclaredFields()) {
             if (field.isAnnotationPresent(ManyToOne.class)) {
                 dependencies.add(field.getType());
             }
         }
-
+        
         return dependencies;
     }
-
+    
     @SuppressWarnings("unchecked")
     @Transactional
     private void generateDataForEntity(Class<?> entityClass, int count) {
         String entityName = entityClass.getSimpleName();
         JpaRepository repository = findRepositoryForEntityClass(entityClass);
-
+        
         if (repository == null) {
             System.err.println("Warning: No repository found for entity " + entityName);
             return;
         }
-
+        
         System.out.println("Generating " + count + " records for " + entityName);
-
+        
         List<Object> entities = generateEntitiesForClass(entityClass, count);
         repository.saveAll(entities);
-
+        
         // Cache generated entities for future reference
         generatedEntitiesCache.put(entityClass, entities);
     }
-
+    
     private List<Object> generateEntitiesForClass(Class<?> entityClass, int count) {
         Faker faker = new Faker();
         List<Object> entities = new ArrayList<>();
-
+        
         try {
             for (int i = 0; i < count; i++) {
                 Object entity = entityClass.getDeclaredConstructor().newInstance();
-
+                
                 // Process each field
                 for (Field field : entityClass.getDeclaredFields()) {
                     field.setAccessible(true);
-
+                    
                     // Skip ID fields as they're auto-generated
-                    if (field.getName().equals("id") ||
-                            field.isAnnotationPresent(jakarta.persistence.Id.class)) {
+                    if (field.getName().equals("id") || 
+                        field.isAnnotationPresent(jakarta.persistence.Id.class)) {
                         continue;
                     }
-
+                    
                     // Handle relationship fields
                     if (field.isAnnotationPresent(ManyToOne.class)) {
                         setRelationalField(field, entity);
-                    }
+                    } 
                     // Skip collections to avoid circular dependencies
-                    else if (field.isAnnotationPresent(OneToMany.class) ||
-                            Collection.class.isAssignableFrom(field.getType())) {
+                    else if (field.isAnnotationPresent(OneToMany.class) || 
+                             Collection.class.isAssignableFrom(field.getType())) {
                         continue;
-                    }
+                    } 
                     // Handle regular fields
                     else {
                         setRandomValueForField(faker, entity, field);
                     }
                 }
-
+                
                 entities.add(entity);
             }
         } catch (Exception e) {
             throw new RuntimeException("Error generating entities for " + entityClass.getSimpleName(), e);
         }
-
+        
         return entities;
     }
-
+    
     @SuppressWarnings("unchecked")
     private void setRelationalField(Field field, Object entity) throws IllegalAccessException {
         Class<?> relationClass = field.getType();
-
+        
         // Check if we have already generated entities of this type
         List<Object> relatedEntities = generatedEntitiesCache.get(relationClass);
-
+        
         if (relatedEntities != null && !relatedEntities.isEmpty()) {
             // Randomly select one of the already generated entities
             int randomIndex = new Random().nextInt(relatedEntities.size());
@@ -222,7 +222,7 @@ public class DataGeneratorService {
             JpaRepository repository = findRepositoryForEntityClass(relationClass);
             if (repository != null) {
                 List<?> existingEntities = repository.findAll();
-
+                
                 if (!existingEntities.isEmpty()) {
                     // Use an existing entity from database
                     int randomIndex = new Random().nextInt(existingEntities.size());
@@ -233,7 +233,7 @@ public class DataGeneratorService {
                     if (relatedEntity != null) {
                         repository.save(relatedEntity);
                         field.set(entity, relatedEntity);
-
+                        
                         // Cache this entity for future reference
                         List<Object> newCache = new ArrayList<>();
                         newCache.add(relatedEntity);
@@ -243,53 +243,53 @@ public class DataGeneratorService {
             }
         }
     }
-
+    
     private Object generateSingleEntityForClass(Class<?> entityClass) {
         Faker faker = new Faker();
-
+        
         try {
             Object entity = entityClass.getDeclaredConstructor().newInstance();
-
+            
             for (Field field : entityClass.getDeclaredFields()) {
                 field.setAccessible(true);
-
+                
                 // Skip ID, OneToMany and ManyToOne to avoid circular dependencies
-                if (field.getName().equals("id") ||
-                        field.isAnnotationPresent(jakarta.persistence.Id.class) ||
-                        field.isAnnotationPresent(OneToMany.class) ||
-                        field.isAnnotationPresent(ManyToOne.class) ||
-                        Collection.class.isAssignableFrom(field.getType())) {
+                if (field.getName().equals("id") || 
+                    field.isAnnotationPresent(jakarta.persistence.Id.class) ||
+                    field.isAnnotationPresent(OneToMany.class) ||
+                    field.isAnnotationPresent(ManyToOne.class) ||
+                    Collection.class.isAssignableFrom(field.getType())) {
                     continue;
                 }
-
+                
                 setRandomValueForField(faker, entity, field);
             }
-
+            
             return entity;
         } catch (Exception e) {
-            System.err.println(
-                    "Error generating related entity for " + entityClass.getSimpleName() + ": " + e.getMessage());
+            System.err.println("Error generating related entity for " + entityClass.getSimpleName() + ": " + e.getMessage());
             return null;
         }
     }
-
+    
     private void setRandomValueForField(Faker faker, Object entity, Field field) {
         try {
             Class<?> type = field.getType();
-
+            
             if (type == String.class) {
                 // Get column length from annotations if available
                 int maxLength = getMaxFieldLength(field);
-
+                
                 String value;
                 // Set appropriate values based on field name
                 if (field.getName().contains("email")) {
                     value = faker.internet().emailAddress();
                 } else if (field.getName().equals("phone")) {
-                    value = "03245664";
+                    value = "03245664"; 
                 } else if (field.getName().contains("phone")) {
-                    value = faker.numerify("###-###-####");
-                } else if (field.getName().equals("firstName") || field.getName().equals("first_name")) {
+                    value = faker.numerify("###-###-####"); 
+                } 
+                else if (field.getName().equals("firstName") || field.getName().equals("first_name")) {
                     value = faker.name().firstName();
                 } else if (field.getName().equals("lastName") || field.getName().equals("last_name")) {
                     value = faker.name().lastName();
@@ -300,7 +300,7 @@ public class DataGeneratorService {
                 } else if (field.getName().contains("address")) {
                     value = faker.address().streetAddress();
                 } else if (field.getName().equals("password")) {
-                    value = "password123";
+                    value = "password123"; 
                 } else if (field.getName().equals("username")) {
                     value = faker.name().username();
                 } else if (field.getName().equals("provider")) {
@@ -308,12 +308,12 @@ public class DataGeneratorService {
                 } else {
                     value = "hello";
                 }
-
+                
                 // Ensure the value doesn't exceed the maximum length
                 if (value.length() > maxLength) {
                     value = value.substring(0, maxLength);
                 }
-
+                
                 field.set(entity, value);
             } else if (type == Integer.class || type == int.class) {
                 field.set(entity, faker.number().numberBetween(1, 100));
@@ -342,13 +342,13 @@ public class DataGeneratorService {
                 }
             }
             // Add more types as needed
-
+            
         } catch (Exception e) {
             // Log but continue with other fields
             System.err.println("Could not set value for field: " + field.getName() + ", error: " + e.getMessage());
         }
     }
-
+    
     // Get the maximum length for a field from annotations
     private int getMaxFieldLength(Field field) {
         if (field.getName().equals("firstName") || field.getName().equals("first_name")) {
@@ -364,7 +364,7 @@ public class DataGeneratorService {
         } else if (field.getName().equals("provider")) {
             return 10;
         }
-
+        
         // Try to get the length from annotations
         try {
             if (field.isAnnotationPresent(jakarta.persistence.Column.class)) {
@@ -374,33 +374,33 @@ public class DataGeneratorService {
         } catch (Exception e) {
             // Ignore and use default
         }
-
+        
         // Default safe length
         return 10;
     }
-
+    
     private JpaRepository findRepositoryForEntityClass(Class<?> entityClass) {
         // Try to find repository by naming convention
         String repositoryName = entityClass.getSimpleName() + "Repository";
         String beanName = repositoryName.substring(0, 1).toLowerCase() + repositoryName.substring(1);
-
+        
         try {
             return (JpaRepository) context.getBean(beanName);
         } catch (NoSuchBeanDefinitionException e) {
             // Try all repositories
             Map<String, JpaRepository> repositories = context.getBeansOfType(JpaRepository.class);
-
+            
             for (JpaRepository repository : repositories.values()) {
                 Class<?> repoEntityClass = getEntityClassForRepository(repository);
                 if (repoEntityClass != null && repoEntityClass.equals(entityClass)) {
                     return repository;
                 }
             }
-
+            
             return null;
         }
     }
-
+    
     // Helper methods
     private String getEntityNameFromTableName(String tableName) {
         // Convert from snake_case to CamelCase
@@ -416,7 +416,7 @@ public class DataGeneratorService {
         }
         return entityName.toString();
     }
-
+    
     private Object findRepositoryForEntity(String entityName) {
         // Try to find the repository by naming convention
         try {
@@ -426,7 +426,7 @@ public class DataGeneratorService {
             return null;
         }
     }
-
+    
     private Class<?> getEntityClassForRepository(JpaRepository repository) {
         // Use reflection to get the entity type
         Type[] genericInterfaces = repository.getClass().getGenericInterfaces();

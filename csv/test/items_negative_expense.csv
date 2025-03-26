@@ -1,0 +1,4 @@
+customer_email,type,status,subject_or_name,expense
+customer1@example.com,lead,meeting-to-schedule,New lead,-150.00
+customer2@example.com,ticket,open,Bug fix,95.87
+customer3@example.com,lead,assigned,Partnership opportunity,-68.50
